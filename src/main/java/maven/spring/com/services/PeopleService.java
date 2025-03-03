@@ -3,6 +3,7 @@ package maven.spring.com.services;
 import maven.spring.com.models.Book;
 import maven.spring.com.models.Person;
 import maven.spring.com.repositories.PeopleRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,7 @@ public class PeopleService {
     public List<Book> getBooksByPersonId(int id) {
         Person person = peopleRepository.findById(id).orElse(null);
         assert person != null;
+        Hibernate.initialize(person.getBooks());
         return person.getBooks();
     }
 

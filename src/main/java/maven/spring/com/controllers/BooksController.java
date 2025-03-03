@@ -5,7 +5,6 @@ import maven.spring.com.models.Book;
 import maven.spring.com.models.Person;
 import maven.spring.com.services.BooksService;
 import maven.spring.com.services.PeopleService;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +40,6 @@ public class BooksController {
         Optional<Person> bookOwner = booksService.getBookOwner(id);
 
         if (bookOwner.isPresent()) {
-            Hibernate.initialize(person.getBooks());
             model.addAttribute("owner", bookOwner.get());
         } else {
             model.addAttribute("people", personService.index());
