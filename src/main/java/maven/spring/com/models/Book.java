@@ -1,23 +1,38 @@
 package maven.spring.com.models;
 
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+@Entity
+@Table(name = "book")
 public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private int id;
 
     @NotEmpty(message = "Пустое поле названия")
     @Size(min = 2, max = 100, message = "Слишком длинное/короткое имя, пределы [2-100]")
+    @Column(name = "title")
     private String title;
 
     @NotEmpty(message = "Пустое поле автора")
     @Size(min = 2, max = 100, message = "Слишком длинное/короткое имя автора, пределы [2-100]")
+    @Column(name = "author")
     private String author;
 
     @Min(value = 1000, message = "Год не меньше 1000")
+    @Column(name = "year")
     private int year;
+
+    @ManyToOne()
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    private Person owner;
+
 
     public Book() {
     }
@@ -26,6 +41,14 @@ public class Book {
         this.title = title;
         this.author = author;
         this.year = year;
+    }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
     }
 
     public int getId() {
