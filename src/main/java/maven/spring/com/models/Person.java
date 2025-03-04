@@ -29,12 +29,10 @@ public class Person {
     public Person() {
     }
 
-    public Person(int id, String name, int year) {
-        this.id = id;
+    public Person(String name, int year) {
         this.name = name;
         this.year = year;
     }
-
 
 
     public List<Book> getBooks() {

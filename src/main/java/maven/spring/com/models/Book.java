@@ -1,10 +1,10 @@
 package maven.spring.com.models;
 
 import javax.persistence.*;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Table(name = "book")
@@ -25,13 +25,20 @@ public class Book {
     @Column(name = "author")
     private String author;
 
-    @Min(value = 1000, message = "Год не меньше 1000")
+    @Min(value = 1000, message = "Год должен быть не меньше 1000")
     @Column(name = "year")
     private int year;
 
     @ManyToOne()
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person owner;
+
+    @Column(name = "taken_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date takenAt;
+
+    @Transient
+    private Boolean expired;
 
 
     public Book() {
@@ -41,6 +48,22 @@ public class Book {
         this.title = title;
         this.author = author;
         this.year = year;
+    }
+
+    public Date getTakenAt() {
+        return takenAt;
+    }
+
+    public void setTakenAt(Date takenAt) {
+        this.takenAt = takenAt;
+    }
+
+    public Boolean getExpired() {
+        return expired;
+    }
+
+    public void setExpired(Boolean expired) {
+        this.expired = expired;
     }
 
     public Person getOwner() {

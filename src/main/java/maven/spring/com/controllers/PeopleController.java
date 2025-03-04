@@ -33,7 +33,7 @@ public class PeopleController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("person", peopleService.show(id));
+        model.addAttribute("person", peopleService.findOne(id));
         model.addAttribute("books", peopleService.getBooksByPersonId(id));
         return "people/show";
     }
@@ -58,7 +58,7 @@ public class PeopleController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("person", peopleService.show(id));
+        model.addAttribute("person", peopleService.findOne(id));
         return "people/edit";
     }
 

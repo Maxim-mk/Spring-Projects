@@ -6,6 +6,9 @@ import maven.spring.com.models.Person;
 import maven.spring.com.services.BooksService;
 import maven.spring.com.services.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,14 +31,26 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("books", booksService.index());
+    public String index(@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+                        @RequestParam(value = "books_per_page", required = false, defaultValue = "10") Integer books_per_page,
+                        @RequestParam(value = "sort_by_year", required = false) Boolean sort_by_year,
+                        Model model) {
+
+        Pageable pageable;
+
+        if (sort_by_year != null && sort_by_year) {
+            pageable = PageRequest.of(page, books_per_page, Sort.by("year").ascending());
+        } else {
+            pageable = PageRequest.of(page, books_per_page);
+        }
+
+        model.addAttribute("books", booksService.index(pageable));
         return "books/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
-        model.addAttribute("book", booksService.show(id));
+        model.addAttribute("book", booksService.findOne(id));
 
         Optional<Person> bookOwner = booksService.getBookOwner(id);
 
@@ -66,7 +81,7 @@ public class BooksController {
 
     @GetMapping("/{id}/edit")
     public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("book", booksService.show(id));
+        model.addAttribute("book", booksService.findOne(id));
         return "books/edit";
     }
 
@@ -96,6 +111,17 @@ public class BooksController {
     public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person newPerson) {
         booksService.assign(id, newPerson);
         return "redirect:/books/" + id;
+    }
+
+    @GetMapping("/search")
+    public String searchPage() {
+        return "books/search";
+    }
+
+    @PostMapping("/search")
+    public String makeSearch(Model model, @RequestParam("query") String query) {
+        model.addAttribute("books", booksService.findBookByFirstLetters(query));
+        return "books/search";
     }
 
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class PeopleService {
         return peopleRepository.findAll();
     }
 
-    public Person show(int id) {
+    public Person findOne(int id) {
         return peopleRepository.findById(id).orElse(null);
     }
 
@@ -50,6 +51,14 @@ public class PeopleService {
         Person person = peopleRepository.findById(id).orElse(null);
         assert person != null;
         Hibernate.initialize(person.getBooks());
+        person.getBooks()
+                .forEach(book -> {
+                            long diffMills = Math.abs(book.getTakenAt().getTime() - new Date().getTime());
+                            if (diffMills > 864000000) { // 10 days
+                                book.setExpired(true);
+                            }
+                        }
+                );
         return person.getBooks();
     }
 

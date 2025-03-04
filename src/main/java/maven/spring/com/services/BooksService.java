@@ -4,9 +4,12 @@ import maven.spring.com.models.Book;
 import maven.spring.com.models.Person;
 import maven.spring.com.repositories.BooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +24,11 @@ public class BooksService {
         this.booksRepository = booksRepository;
     }
 
-    public List<Book> index() {
-        return booksRepository.findAll();
+    public Page<Book> index(Pageable pageable) {
+        return booksRepository.findAll(pageable);
     }
 
-    public Book show(int id) {
+    public Book findOne(int id) {
         return booksRepository.findById(id).orElse(null);
     }
 
@@ -36,7 +39,9 @@ public class BooksService {
 
     @Transactional
     public void update(int id, Book newBook) {
+        Book bookToUpdate = findOne(id);
         newBook.setId(id);
+        newBook.setOwner(bookToUpdate.getOwner());
         booksRepository.save(newBook);
     }
 
@@ -53,12 +58,22 @@ public class BooksService {
 
     @Transactional
     public void release(int id) {
-        booksRepository.findById(id).ifPresent(book -> book.setOwner(null));
+        booksRepository.findById(id).ifPresent(book -> {
+            book.setOwner(null);
+            book.setTakenAt(null);
+        });
     }
 
     @Transactional
     public void assign(int id, Person newPerson) {
-        booksRepository.findById(id).ifPresent(book -> book.setOwner(newPerson));
+        booksRepository.findById(id).ifPresent(book -> {
+            book.setOwner(newPerson);
+            book.setTakenAt(new Date());
+        });
+    }
+
+    public List<Book> findBookByFirstLetters(String letters) {
+        return booksRepository.findByTitleStartingWith(letters);
     }
 
 
