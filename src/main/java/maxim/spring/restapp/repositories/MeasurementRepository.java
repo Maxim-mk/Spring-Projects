@@ -1,12 +1,10 @@
 package maxim.spring.restapp.repositories;
 
-import maxim.spring.restapp.models.Person;
+import maxim.spring.restapp.models.Measurement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface PeopleRepository extends JpaRepository<Person, Integer> {
-
+public interface MeasurementRepository extends JpaRepository<Measurement, Integer> {
+    int countByRainingIsTrue();
 }
