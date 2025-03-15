@@ -41,4 +41,13 @@ public class MeasurementDTO {
     public void setSensor(SensorDTO sensor) {
         this.sensor = sensor;
     }
+
+    @Override
+    public String toString() {
+        return "MeasurementDTO{" +
+                "value=" + value +
+                ", raining=" + raining +
+                ", sensor=" + sensor +
+                '}';
+    }
 }
